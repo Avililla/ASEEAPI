@@ -1,5 +1,5 @@
 # ASEEAPI
-API REST para la aplicación de android de la asignatura de ASEE
+API REST for ASEE course
 
 ## Description
 This API is designed for meet the requirements of API in ASEE course.
