@@ -26,6 +26,7 @@ router.get('/',verifyToken,(req,res)=>{
         })
     }
 })
+
 router.get('/image',(req,res)=>{
     try{
         res.status(200).sendFile(path.join(__dirname, '../',req.query.imgsrc))
@@ -38,7 +39,7 @@ router.get('/image',(req,res)=>{
 //Necesitamos el id que tiene en la bd
 router.put('/',verifyToken,(req,res)=>{
     if(req.query.id){
-        Caja.findOneAndUpdate({'_id':req.body.id},{'name':req.body.name,'idcasa':req.body.idcasa,'description':req.body.description},{new:true},(err,doc)=>{
+        Caja.findOneAndUpdate({'_id':req.query.id},{'name':req.body.name,'idcasa':req.body.idcasa,'description':req.body.description},{new:true},(err,doc)=>{
             if(err) return res.status(500).send({msg:err})
             res.status(200).json(doc)
         })
@@ -59,6 +60,17 @@ router.post('/',verifyToken,upload.single('image'), (req, res) => {
         if(err) return res.status(500).send({msg:err})
         res.status(200).json(product)
     })
+})
+
+router.delete('/',verifyToken, (req, res) => {
+    if(req.query.id){
+        Caja.deleteOne({'userid':req.user.id,'_id':req.query.id},(err,count)=>{
+            if(err) return res.status(500).send({msg:err})
+            res.status(200).json({deleted:count})
+        })
+    }else{
+        return res.status(401).send({msg:"No se ha aportado id de la caja"})
+    }
 })
 
 module.exports = router
