@@ -30,9 +30,9 @@ router.post('/register',(req,res)=>{
                 user.googleId = ""
                 user.password = hash
                 user.email = req.body.email
-                user.save((err,user)=>{
+                user.save((err,auxuser)=>{
                     if(err) return res.status(500).json({msg:"Error al insertar un usuario"})
-                    res.status(200).json({user})
+                    res.status(200).json({auxuser})
                 })
             })
         })
@@ -92,9 +92,9 @@ router.get('/',verifyToken,(req,res)=>{
     })
 })
 
-router.put('/',(req,res)=>{
+// router.put('/',(req,res)=>{
 
-})
+// })
 
 
 module.exports = router
