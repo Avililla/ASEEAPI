@@ -8,35 +8,42 @@ const path = require('path')
 
 //Get by name
 router.get('/',verifyToken,(req,res)=>{
-    console.log(req.user)
-    if(req.query.name !== ''){
-        Caja.find({userid:req.user.id,name:req.query.name},(err,cajas)=>{
+    console.log(req.user.id)
+    if(req.query.name){
+        Caja.findOne({'userid':req.user.id,'name':req.query.name},(err,cajas)=>{
             if(err) return res.status(500).send({msg:err})
-            res.status(200).json(cajas)
+            if(cajas){
+                res.status(200).json(cajas)
+            }else{
+                res.status(200).json([])
+            }
         })
     }else{
-        Caja.find({userid:req.user.id},(err,cajas)=>{
+        Caja.find({'userid':req.user.id},(err,cajas)=>{
+            console.log("Encuentro todas")
             if(err) return res.status(500).send({msg:err})
             res.status(200).json(cajas)
         })
     }
 })
-// router.get('/image',(req,res)=>{
-//     try{
-//         res.status(200).sendFile(path.join(__dirname, '../',req.query.imgsrc))
-//     }catch(err){
-//         res.status(500).send({msg:'Error getting image'})
-//     }
+router.get('/image',(req,res)=>{
+    try{
+        res.status(200).sendFile(path.join(__dirname, '../',req.query.imgsrc))
+    }catch(err){
+        res.status(500).send({msg:'Error getting image'})
+    }
     
-// })
+})
 
 //Necesitamos el id que tiene en la bd
 router.put('/',verifyToken,(req,res)=>{
     if(req.query.id){
-        Caja.findOne({_id:req.query.id},(err,caja)=>{
-            if(err) return res.status(400).send({msg:"Caja no encontrada"})
-            
+        Caja.findOneAndUpdate({'_id':req.body.id},{'name':req.body.name,'idcasa':req.body.idcasa,'description':req.body.description},{new:true},(err,doc)=>{
+            if(err) return res.status(500).send({msg:err})
+            res.status(200).json(doc)
         })
+    }else{
+        return res.status(401).send({msg:"No se ha aportado id de la caja"})
     }
 })
 

@@ -7,10 +7,8 @@ const ExpiredJWT = require('../models/jwttoken')
 const Joi = require('joi')
 const verifyToken = require('../verifytoken')
 
-const SALT = bcrypt.genSalt(10)
-
 const schemaRegister = Joi.object({
-    name:Joi.string().min(6).max(255).required(),
+    username:Joi.string().min(6).max(255).required(),
     email:Joi.string().min(6).max(255).required().email(),
     password:Joi.string().min(8).max(1024).required()
 })
@@ -23,18 +21,21 @@ router.post('/register',(req,res)=>{
         User.find({email:req.body.email},(err,docs)=>{
             if(err) return res.status(500).json({msg:'Error interno'})
             if(docs.length) return res.status(409).json({msg:'Este email pertenece a un usuario ya registrado'})
-            bcrypt.hash(req.body.password,SALT,(err,hash)=>{
-                if(err) return res.status(500).json({msg:err})
-                let user = new User()
-                user.username = req.body.name
-                user.googleId = ""
-                user.password = hash
-                user.email = req.body.email
-                user.save((err,auxuser)=>{
-                    if(err) return res.status(500).json({msg:"Error al insertar un usuario"})
-                    res.status(200).json({auxuser})
+            bcrypt.genSalt(10,(err,salt)=>{
+                if(err) return res.status(500).json({msg:err.message})
+                bcrypt.hash(req.body.password,salt,(err,hash)=>{
+                    if(err) return res.status(500).json({msg:err})
+                    let user = new User()
+                    user.username = req.body.username
+                    user.password = hash
+                    user.email = req.body.email
+                    user.save((err,auxuser)=>{
+                        if(err) return res.status(500).json({msg:"Error al insertar un usuario"})
+                        res.status(200).json({auxuser})
+                    })
                 })
             })
+            
         })
     }
 })
@@ -63,11 +64,7 @@ router.post('/login',(req,res)=>{
                     name: user.username,
                     id: user._id
                 }, process.env.JWTOKEN,{expiresIn:"1d"})
-                res.status(200).header('auth-token',token).json({
-                    error:null,
-                    data:{token},
-                    msg:"Bienvenido"
-                })
+                res.status(200).header('auth-token',token).json({token})
             })
         })
     }
