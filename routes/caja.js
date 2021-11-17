@@ -14,9 +14,9 @@ router.get('/',verifyToken,(req,res)=>{
     })
 })
 
-router.get('/:name',verifyToken,(req,res)=>{
-    if(req.params.name){
-        Caja.find({'userid':req.user.id,'name':req.params.name},(err,cajas)=>{
+router.get('/name',verifyToken,(req,res)=>{
+    if(req.query.name){
+        Caja.find({'userid':req.user.id,'name':req.query.name},(err,cajas)=>{
             if(err) return res.status(500).send({msg:err})
             res.status(200).json(cajas)
         })
@@ -36,9 +36,9 @@ router.get('/image',(req,res)=>{
 })
 
 //Necesitamos el id que tiene en la bd
-router.put('/:id',verifyToken,(req,res)=>{
-    if(req.params.id){
-        Caja.findOneAndUpdate({'_id':req.params.id},{'name':req.body.name,'idcasa':req.body.idcasa,'description':req.body.description},{new:true},(err,doc)=>{
+router.put('/',verifyToken,(req,res)=>{
+    if(req.query.id){
+        Caja.findOneAndUpdate({'_id':req.query.id},{'name':req.body.name,'idcasa':req.body.idcasa,'description':req.body.description},{new:true},(err,doc)=>{
             if(err) return res.status(500).send({msg:err})
             res.status(200).json(doc)
         })
@@ -65,9 +65,9 @@ router.post('/',verifyToken,upload.single('image'), (req, res) => {
     }
 })
 
-router.delete('/:id',verifyToken, (req, res) => {
-    if(req.params.id){
-        Caja.deleteOne({'userid':req.user.id,'_id':req.params.id},(err,count)=>{
+router.delete('/',verifyToken, (req, res) => {
+    if(req.query.id){
+        Caja.deleteOne({'userid':req.user.id,'_id':req.query.id},(err,count)=>{
             if(err) return res.status(500).send({msg:err})
             res.status(200).json({deleted:count})
         })
