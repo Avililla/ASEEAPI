@@ -8,7 +8,6 @@ var UserSchema = new Schema({
         min:6,
         max:255
     },
-    imginfo:Object,
     password:{
         type:String,
         require:true,

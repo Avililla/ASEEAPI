@@ -9,9 +9,9 @@ router.post('/',verifyToken, (req, res) => {
         casa.name = req.body.name
         casa.description = req.body.description
         casa.userid = req.user.id
-        casa.nucleof = new Array(req.user.id)
         casa.save((err,auxcasa)=>{
             if(err) return res.status(500).send({msg:err})
+            console.log(auxcasa)
             res.status(200).json(auxcasa)
         })
     }else{
@@ -22,16 +22,23 @@ router.post('/',verifyToken, (req, res) => {
 
 //Devuelve todas las casas con el userid ya sea de casa propia o nucelo
 router.get('/',verifyToken, (req, res)=>{
-    Casa.find({$or:[{'userid':req.user.id,'nucleof':req.user.id}]},(err,casas)=>{
+    Casa.find({'userid':req.user.id},(err,casas)=>{
         if (err) return res.status(401).send({msg:err})
         res.status(200).json(casas)
+    })
+})
+
+router.get('/id',verifyToken, (req, res)=>{
+    Casa.findOne({'userid':req.user.id,'_id':req.query.id},(err,casa)=>{
+        if (err) return res.status(401).send({msg:err})
+        res.status(200).json(casa)
     })
 })
 
 //Devuelve la/las casas con el name especificado
 router.get('/name',verifyToken, (req,res)=>{
     if(req.query.name){
-        Casa.find({'name':req.query.name,$or:[{'userid':req.user.id}, {'nucleof':req.user.id} ]},(err,casa)=>{
+        Casa.find({'name':req.query.name,'userid':req.user.id},(err,casa)=>{
             if (err) return res.status(401).send({msg:err})
             res.status(200).json(casa)
         })
@@ -72,6 +79,8 @@ router.delete('/',verifyToken,(req,res)=>{
             res.status(200).json({count:deletedcount})
         })
     }else{
-        return res.status(401).send({msg:"No se ha aportado id de la cas"})
+        return res.status(401).send({msg:"No se ha aportado id de la caja"})
     }
 })
+
+module.exports = router

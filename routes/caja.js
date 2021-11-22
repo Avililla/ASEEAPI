@@ -14,6 +14,15 @@ router.get('/',verifyToken,(req,res)=>{
     })
 })
 
+router.get('/id',verifyToken,(req,res)=>{
+    console.log(req.query.id)
+    Caja.findOne({'userid':req.user.id,'_id':req.query.id},(err,caja)=>{
+        if(err) return res.status(500).send({msg:err})
+        console.log(caja)
+        res.status(200).json(caja)
+    })
+})
+
 router.get('/name',verifyToken,(req,res)=>{
     if(req.query.name){
         Caja.find({'userid':req.user.id,'name':req.query.name},(err,cajas)=>{
@@ -26,14 +35,6 @@ router.get('/name',verifyToken,(req,res)=>{
 })
 
 
-router.get('/image',(req,res)=>{
-    try{
-        res.status(200).sendFile(path.join(__dirname, '../',req.query.imgsrc))
-    }catch(err){
-        res.status(500).send({msg:'Error getting image'})
-    }
-    
-})
 
 //Necesitamos el id que tiene en la bd
 router.put('/',verifyToken,(req,res)=>{
@@ -48,11 +49,14 @@ router.put('/',verifyToken,(req,res)=>{
 })
 
 router.post('/',verifyToken,upload.single('image'), (req, res) => {
-    if(req.body.name && req.body.idcasa && req.body.description){
+    console.log(req.body)
+    if(req.body.name && req.body.idcasa){
         let caja = new Caja()
         caja.name = req.body.name
         caja.idcasa = req.body.idcasa
-        caja.imginfo = req.file
+        if(req.file !== undefined){
+            caja.imginfo = req.file.path
+        }
         caja.description = req.body.description
         caja.userid = req.user.id
         console.log(caja)

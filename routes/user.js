@@ -31,7 +31,12 @@ router.post('/register',(req,res)=>{
                     user.email = req.body.email
                     user.save((err,auxuser)=>{
                         if(err) return res.status(500).json({msg:"Error al insertar un usuario"})
-                        res.status(200).json({auxuser})
+                        var useraux = {
+                            username:auxuser.username,
+                            email:auxuser.email
+                        }
+                        console.log(useraux)
+                        res.status(200).json(useraux)
                     })
                 })
             })
@@ -46,6 +51,7 @@ const schemaLogin = Joi.object({
 })
 
 router.post('/login',(req,res)=>{
+    console.log(req.body)
     const {error} = schemaLogin.validate(req.body)
     if(error){
         res.status(400).json({msg:error.details[0].message})
@@ -58,7 +64,7 @@ router.post('/login',(req,res)=>{
             bcrypt.compare(req.body.password,user.password,(err,pass)=>{
                 if(err) return res.status(500).json({msg:err})
 
-                if(!pass) return res.status(400).json({msg:"No existe un usContraseña invalida"})
+                if(!pass) return res.status(400).json({msg:"Contraseña invalida"})
 
                 const token = jwt.sign({
                     name: user.username,
@@ -71,6 +77,7 @@ router.post('/login',(req,res)=>{
 })
 
 router.post('/logout',verifyToken,(req,res)=>{
+    console.log(`${req.user.id} id usuario`)
     console.log(`${req.user.name} pidiendo loggout`)
     console.log(req.header('auth-token'))
     let expired = new ExpiredJWT()

@@ -7,12 +7,16 @@ var ObjetoSchema = new Schema({
         require:true,
     },
     idcaja:String,
-    imginfo:Object,
+    imginfo:String,
     description:String,
     userid:{
         type:String,
         require:true,
     },
+    categoria:{
+        type:String,
+        require:true
+    }
 });
 
 var Objeto = mongoose.model('Objeto',ObjetoSchema)

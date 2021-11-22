@@ -7,10 +7,9 @@ var Casachema = new Schema({
     userid:{
         type:String,
         require:true,
-    },
-    nucleof:Array[String]
+    }
 });
 
-var Casa = mongoose.model('Caja',Casachema)
+var Casa = mongoose.model('Casa',Casachema)
 
 module.exports = Casa

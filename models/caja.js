@@ -7,7 +7,7 @@ var CajaSchema = new Schema({
         require:true,
     },
     idcasa:String,
-    imginfo:Object,
+    imginfo:String,
     description:String,
     userid:{
         type:String,
