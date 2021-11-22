@@ -37,9 +37,14 @@ router.get('/name',verifyToken,(req,res)=>{
 
 
 //Necesitamos el id que tiene en la bd
-router.put('/',verifyToken,(req,res)=>{
+router.put('/',verifyToken,upload.single('image'),(req,res)=>{
+    
     if(req.query.id){
-        Caja.findOneAndUpdate({'_id':req.query.id},{'name':req.body.name,'idcasa':req.body.idcasa,'description':req.body.description},{new:true},(err,doc)=>{
+        var auxfile
+        if(req.file){
+            auxfile = req.file.path
+        }
+        Caja.findOneAndUpdate({'_id':req.query.id},{'name':req.body.name,'idcasa':req.body.idcasa,'description':req.body.description,'imginfo':auxfile},{new:true},(err,doc)=>{
             if(err) return res.status(500).send({msg:err})
             res.status(200).json(doc)
         })

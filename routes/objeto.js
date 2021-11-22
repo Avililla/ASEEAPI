@@ -57,11 +57,16 @@ router.post('/',verifyToken,upload.single('image'),(req, res)=>{
     }
 })
 
-//Actualiza una caja con id x
-router.put('/',verifyToken,(req, res)=>{
+//Actualiza un objeto con id x
+router.put('/',verifyToken,upload.single('image'),(req, res)=>{
     if(req.query.id){
-        Objeto.findOneAndUpdate({'_id':req.query.id},{'name':req.body.name,'idcaja':req.body.idcaja,'description':req.body.description,'categoria':req.body.categoria},{new:true},(err,doc)=>{
+        var auxfile
+        if(req.file){
+            auxfile = req.file.path
+        }
+        Objeto.findOneAndUpdate({'_id':req.query.id},{'name':req.body.name,'idcaja':req.body.idcaja,'description':req.body.description,'categoria':req.body.categoria,'imginfo':auxfile},{new:true},(err,doc)=>{
             if(err) return res.status(500).send({msg:err})
+            console.log(doc)
             res.status(200).json(doc)
         })
     }

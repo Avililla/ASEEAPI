@@ -73,9 +73,12 @@ router.put('/',verifyToken, (req,res)=>{
 
 //Borra una casa con el id de la casa
 router.delete('/',verifyToken,(req,res)=>{
+    console.log(req.query.id)
     if(req.query.id){
+        console.log(req.query.id)
         Casa.deleteOne({'_id':req.query.id,'userid':req.user.id},(err,deletedcount)=>{
             if (err) return res.status(401).send({msg:err})
+            console.log(deletedcount)
             res.status(200).json({count:deletedcount})
         })
     }else{

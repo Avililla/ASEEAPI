@@ -11,6 +11,7 @@ const CasaRoute = require('./routes/casa')
 const verifyToken = require('./verifytoken')
 const dotenv = require('dotenv')
 const path = require('path')
+var fs = require("fs");
 
 //Servidores
 // var http = require('http')
@@ -42,8 +43,12 @@ app.get('/image',(req,res)=>{
     console.log(__dirname)
     console.log(path.join(__dirname,req.query.imgsrc))
     try{
-        console.log(req.query)
-        res.status(200).sendFile(path.join(__dirname,req.query.imgsrc))
+        fs.readFile(path.join(__dirname,req.query.imgsrc),(err,data)=>{
+            if(err) return res.status(500)
+            var encodedimage = new Buffer(data, 'binary').toString('base64')
+            console.log("Lo tengo")
+            res.status(200).json(encodedimage)
+        })
     }catch(err){
         res.status(500).send({msg:'Error getting image'})
     }

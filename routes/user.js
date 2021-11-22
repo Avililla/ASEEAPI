@@ -6,6 +6,9 @@ const User = require('../models/users')
 const ExpiredJWT = require('../models/jwttoken')
 const Joi = require('joi')
 const verifyToken = require('../verifytoken')
+const Objeto = require('../models/objeto')
+const Casa = require('../models/casa')
+const Caja = require('../models/caja')
 
 const schemaRegister = Joi.object({
     username:Joi.string().min(6).max(255).required(),
@@ -93,6 +96,26 @@ router.get('/',verifyToken,(req,res)=>{
         if(err) return res.status(400).json({msg:"Usuario no encontrado"})
         res.status(200).json(user)
     })
+})
+
+router.post('/deleteall',verifyToken,(req,res)=>{
+    if(req.user.id){
+        console.log("Delete all")
+        Objeto.deleteMany({'userid':req.user.id},(err,count)=>{
+            if(err) return res.status(500).send({msg:err})
+            console.log(count)
+            Casa.deleteMany({'userid':req.user.id},(err,deletedcount)=>{
+                if (err) return res.status(401).send({msg:err})
+                console.log(deletedcount)
+                Caja.deleteMany({'userid':req.user.id},(err,count)=>{
+                    if(err) return res.status(500).send({msg:err})
+                    console.log(count)
+                    res.status(200).send("Borrado")
+                })
+            })
+        })
+        
+    }
 })
 
 // router.put('/',(req,res)=>{
