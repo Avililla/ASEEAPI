@@ -49,11 +49,12 @@ router.put('/',verifyToken,(req,res)=>{
 })
 
 router.post('/',verifyToken,upload.single('image'), (req, res) => {
-    console.log(req.body)
-    if(req.body.name && req.body.idcasa){
+    if(req.body.name && req.body.description){
         let caja = new Caja()
         caja.name = req.body.name
-        caja.idcasa = req.body.idcasa
+        if(req.body.idcasa !== undefined){
+            caja.idcasa = req.body.idcasa
+        }
         if(req.file !== undefined){
             caja.imginfo = req.file.path
         }
